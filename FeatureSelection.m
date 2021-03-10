@@ -49,14 +49,15 @@ function accuracy = Leave_One_Out_Cross_Validation(data,current_set_of_features,
     %TO ASK AT OFFICE HOURS: how to cut data into partitions nicely in
     %matlab
     
+    partial_acc = 0;
     for i = 1:cross_cut
         itt = (i-1)*cut_size + 1;
         itt2 = i*cut_size;
         test_set = data(itt:itt2,:);
         train_set = [data(1:itt-1,:);data(itt2+1:size(data,1),:)];
-        accuracy = KNN(train_set,test_set,[current_set_of_features,k]);
-        
+        partial_acc = partial_acc + KNN(train_set,test_set,[current_set_of_features,k]);
     end
+    accuracy = partial_acc/cross_cut;
 end
 
 function accuracy = KNN(train,test,features) %k in this case is the amount of neighbors to consider
