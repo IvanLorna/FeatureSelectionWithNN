@@ -28,10 +28,18 @@ acc = NN(train_data,test_data,train_class,test_class,[2,4])
 %disp(['Read file of ',num2str(size(data,1)),' data points with ',num2str(size(data,2)),' features each.']);
 
 %find best performing combination of features through Search
-%[best_features , ordered_features, performances]= Forward_Search(data(:,2:size(data,2)),data(:,1))
+disp(['> Starting forward search <'])
+[best_features_for , ordered_features_for, performances_for]= Forward_Search(data(:,2:size(data,2)),data(:,1));
+disp(['> Starting backward search <'])
+[best_features_back , ordered_features_back, performances_back]= Backward_Search(data(:,2:size(data,2)),data(:,1));
 
-
-[best_features , ordered_features, performances]= Backward_Search(data(:,2:size(data,2)),data(:,1))
+if max(performances_for) >= max(performances_back)
+    best_features = best_features_for
+    best_performance = max(performances_for)
+else
+    best_features = best_features_back
+    best_performance = max(performances_back)
+end
 
 %data(:,best_features) = []
 %[best_features , ordered_features, performances]= Forward_Search(data(:,2:size(data,2)),data(:,1))
@@ -51,9 +59,9 @@ function [best_features, ordered_features, performances] = Backward_Search(data,
         
         for k = 1:size(data,2)
             if isempty(intersect(set_of_dropped_features,k))
-                disp(['---Considering dropping feature ', num2str(k)]);
+                disp(['--Considering dropping feature ', num2str(k)]);
                 accuracy = Leave_One_Out_Cross_Validation(data,class,setdiff(current_set_of_features,[set_of_dropped_features,k]));
-                disp(['accuracy: ',num2str(accuracy)]);
+                disp(['----Accuracy: ',num2str(accuracy)]);
                 
                 if accuracy > best_so_far_accuracy
                     best_so_far_accuracy = accuracy;
@@ -85,9 +93,9 @@ function [best_features, ordered_features, performances] = Forward_Search(data,c
         
         for k = 1:size(data,2)
             if isempty(intersect(current_set_of_features,k))
-                disp(['---Considering adding feature ', num2str(k)]);
+                disp(['--Considering adding feature ', num2str(k)]);
                 accuracy = Leave_One_Out_Cross_Validation(data,class,[current_set_of_features,k]);
-                disp(['accuracy: ',num2str(accuracy)]);
+                disp(['----Accuracy: ',num2str(accuracy)]);
                 
                 if accuracy > best_so_far_accuracy
                     best_so_far_accuracy = accuracy;
