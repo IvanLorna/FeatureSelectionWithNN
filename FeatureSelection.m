@@ -1,38 +1,48 @@
 %CS170 Project 2 Live Script File
 addpath('E:\Winter2021\CS170\Project2\FeatureSelectionWithNN')
 
+datafile = 'CS170_largetestdata__2.txt';
+%datafile = 'CS170_SMALLtestdata__42.txt';
+%datafile = 'CS170_small_special_testdata__95.txt';
+
 %read data from file
-%data = readmatrix('CS170_largetestdata__2.txt');
-%data = readmatrix('CS170_SMALLtestdata__42.txt');
-data = readmatrix('CS170_small_special_testdata__95.txt');
+data = readmatrix(datafile);
 
+disp(['Reading Data Set from file "', datafile,'"' ]);
 
-%Nearest Neighbor Test
-%{
-train_data =[
-            1,10,1,10,1;
-            10,1,10,1,10;
-            5,15,5,15,5
-            ];
-           
-test_data = [
-            2,2,2,2,2;
-            11,11,11,11,11;
-            6,6,6,6,6
-            ];
-
-train_class = [1;2;3];
-test_class = [2,1,1];
-acc = NN(train_data,test_data,train_class,test_class,[2,4])
-%}
-%disp(['Read file of ',num2str(size(data,1)),' data points with ',num2str(size(data,2)),' features each.']);
+disp(['Read file of ',num2str(size(data,1)),' data points with ',num2str(size(data,2)-1),' features each.']);
 
 %find best performing combination of features through Search
 disp(['> Starting forward search <'])
+tic;
 [best_features_for , ordered_features_for, performances_for]= Forward_Search(data(:,2:size(data,2)),data(:,1));
-disp(['> Starting backward search <'])
-[best_features_back , ordered_features_back, performances_back]= Backward_Search(data(:,2:size(data,2)),data(:,1));
+toc;
 
+
+disp(['> Starting backward search <'])
+tic;
+[best_features_back , ordered_features_back, performances_back]= Backward_Search(data(:,2:size(data,2)),data(:,1));
+toc;
+%%
+bar(performances_for)
+hold on;
+
+set(gca,'xticklabel',ordered_features_for);
+title("Figure 1: Accuracies Measured Per Feature Added that Level");
+xlabel('Feature');
+ylabel('Accuracy');
+hold off;
+
+bar(performances_back)
+hold on;
+
+set(gca,'xticklabel',ordered_features_back);
+title("Figure 2: Accuracies Measured Per Feature Dropped that Level");
+xlabel('Feature');
+ylabel('Accuracy');
+hold off;
+
+%%
 if max(performances_for) >= max(performances_back)
     best_features = best_features_for
     best_performance = max(performances_for)
