@@ -28,7 +28,7 @@ bar(performances_for)
 hold on;
 
 set(gca,'xticklabel',ordered_features_for);
-title("Figure 1: Accuracies Measured Per Feature Added that Level");
+title("Figure 4: Accuracies Measured Per Feature Added that Level");
 xlabel('Feature');
 ylabel('Accuracy');
 hold off;
@@ -37,20 +37,25 @@ bar(performances_back)
 hold on;
 
 set(gca,'xticklabel',ordered_features_back);
-title("Figure 2: Accuracies Measured Per Feature Dropped that Level");
+title("Figure 5: Accuracies Measured Per Feature Dropped that Level");
 xlabel('Feature');
 ylabel('Accuracy');
 hold off;
 
 %%
+disp(['Best Features found by Forward Selection: ',num2str(best_features_for)]);
+disp(['Performance: ',num2str(max(performances_for))]);
+disp(['Best Features found by Forward Selection: ',num2str(best_features_back)]);
+disp(['Performance: ',num2str(max(performances_back))]);
 if max(performances_for) >= max(performances_back)
-    best_features = best_features_for
-    best_performance = max(performances_for)
+    best_features = best_features_for;
+    best_performance = max(performances_for);
 else
-    best_features = best_features_back
-    best_performance = max(performances_back)
+    best_features = best_features_back;
+    best_performance = max(performances_back);
 end
-
+disp(['Best Features found Overall: ',num2str(best_features_for)]);
+disp(['Best Performance Overall: ',num2str(max(performances_for))]);
 %data(:,best_features) = []
 %[best_features , ordered_features, performances]= Forward_Search(data(:,2:size(data,2)),data(:,1))
 
